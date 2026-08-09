@@ -1,0 +1,46 @@
+title = "Terraform Custom Rules"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "terraform-admin-password"
+description = "Detect Terraform admin password"
+
+regex = '''(?i)admin_password\s*=\s*["']([^"']+)["']'''
+
+secretGroup = 1
+
+keywords = [
+  "admin_password"
+]
+
+tags = ["terraform","password"]
+
+[[rules]]
+id = "terraform-client-secret"
+description = "Detect Terraform client secret"
+
+regex = '''(?i)client_secret\s*=\s*["']([^"']+)["']'''
+
+secretGroup = 1
+
+keywords = [
+  "client_secret"
+]
+
+tags = ["terraform","secret"]
+
+[[rules]]
+id = "terraform-github-token"
+description = "Detect Terraform github token"
+
+regex = '''(?i)github_token\s*=\s*["']([^"']+)["']'''
+
+secretGroup = 1
+
+keywords = [
+  "github_token"
+]
+
+tags = ["github","token"]

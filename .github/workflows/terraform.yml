@@ -6,14 +6,28 @@ on:
       - feature/pipeline
 
 jobs:
-  validate:
+  terraform:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: Env_prod
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-      - uses: hashicorp/setup-terraform@v3
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
 
-      - run: terraform init
+      - name: Terraform Version
+        run: terraform version
 
-      - run: terraform validate
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        run: terraform plan

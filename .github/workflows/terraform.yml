@@ -52,3 +52,32 @@ jobs:
 
       - name: Terraform Plan
         run: terraform plan -out=tfplan
+
+         - uses: actions/upload-artifact@v4
+        with:
+          name: tfplan
+          path: Env_prod/tfplan
+
+  terraform-apply:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: Env_prod
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+
+      - name: Azure Login
+        run: |
+          az login --service-principal \
+            -u "53d32f59-988d-40ea-892f-9b983abd8f8a" \
+            -p "Ja68Q~8z8Bwdtl93dpgtexiZDyNSXxTKxtFN7cpG" \
+            --tenant "ce1221be-2dd4-4dbd-be67-4765d692baf9"
+
+      - run: terraform init
+
+      - run: terraform apply -auto-approve

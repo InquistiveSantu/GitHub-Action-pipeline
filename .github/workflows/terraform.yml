@@ -11,10 +11,10 @@ on:
       - main
 
 env:
-  ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID || '53d32f59-988d-40ea-892f-9b983abd8f8a' }}
-  ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET || 'Ja68Q~8z8Bwdtl93dpgtexiZDyNSXxTKxtFN7cpG' }}
-  ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID || '1901e74c-f287-4ad5-a027-7e82572afe7a' }}
-  ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID || 'ce1221be-2dd4-4dbd-be67-4765d692baf9' }}
+  ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+  ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+  ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
 
 jobs:
   terraform-plan:
@@ -32,20 +32,8 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
-      - name: Install Azure CLI
-        run: |
-          curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-
-      - name: Azure Login
-        run: |
-          az login --service-principal \
-            -u "${{ env.ARM_CLIENT_ID }}" \
-            -p "${{ env.ARM_CLIENT_SECRET }}" \
-            --tenant "${{ env.ARM_TENANT_ID }}"
-
-      - name: Set Subscription
-        run: |
-          az account set --subscription "${{ env.ARM_SUBSCRIPTION_ID }}"
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive ..
 
       - name: Terraform Version
         run: terraform version
@@ -82,21 +70,6 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
-      - name: Install Azure CLI
-        run: |
-          curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-
-      - name: Azure Login
-        run: |
-          az login --service-principal \
-            -u "${{ env.ARM_CLIENT_ID }}" \
-            -p "${{ env.ARM_CLIENT_SECRET }}" \
-            --tenant "${{ env.ARM_TENANT_ID }}"
-
-      - name: Set Subscription
-        run: |
-          az account set --subscription "${{ env.ARM_SUBSCRIPTION_ID }}"
-
       - name: Download Terraform Plan Artifact
         uses: actions/download-artifact@v4
         with:
@@ -107,4 +80,4 @@ jobs:
         run: terraform init
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve
+        run: terraform apply -auto-approve tfplan

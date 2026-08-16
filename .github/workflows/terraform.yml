@@ -11,10 +11,10 @@ on:
       - main
 
 env:
-  ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
-  ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
-  ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-  ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+  ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID || '53d32f59-988d-40ea-892f-9b983abd8f8a' }}
+  ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET || 'Ja68Q~8z8Bwdtl93dpgtexiZDyNSXxTKxtFN7cpG' }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID || '1901e74c-f287-4ad5-a027-7e82572afe7a' }}
+  ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID || 'ce1221be-2dd4-4dbd-be67-4765d692baf9' }}
 
 jobs:
   terraform-plan:
@@ -34,6 +34,14 @@ jobs:
 
       - name: Terraform Format Check
         run: terraform fmt -check -recursive ..
+
+      - name: Azure Login
+        run: |
+          az login --service-principal \
+            -u "${{ env.ARM_CLIENT_ID }}" \
+            -p "${{ env.ARM_CLIENT_SECRET }}" \
+            --tenant "${{ env.ARM_TENANT_ID }}"
+          az account set --subscription "${{ env.ARM_SUBSCRIPTION_ID }}"
 
       - name: Terraform Version
         run: terraform version
@@ -69,6 +77,14 @@ jobs:
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
+
+      - name: Azure Login
+        run: |
+          az login --service-principal \
+            -u "${{ env.ARM_CLIENT_ID }}" \
+            -p "${{ env.ARM_CLIENT_SECRET }}" \
+            --tenant "${{ env.ARM_TENANT_ID }}"
+          az account set --subscription "${{ env.ARM_SUBSCRIPTION_ID }}"
 
       - name: Download Terraform Plan Artifact
         uses: actions/download-artifact@v4

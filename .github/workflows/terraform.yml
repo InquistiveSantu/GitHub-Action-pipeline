@@ -32,9 +32,8 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
-      - name: Install Azure CLI
-        run: |
-          curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive ..
 
       - name: Azure Login
         run: |
@@ -42,22 +41,19 @@ jobs:
             -u "${{ env.ARM_CLIENT_ID }}" \
             -p "${{ env.ARM_CLIENT_SECRET }}" \
             --tenant "${{ env.ARM_TENANT_ID }}"
-
-      - name: Set Subscription
-        run: |
           az account set --subscription "${{ env.ARM_SUBSCRIPTION_ID }}"
 
       - name: Terraform Version
         run: terraform version
 
       - name: Terraform Init
-        run: terraform init
+        run: terraform init -input=false
 
       - name: Terraform Validate
         run: terraform validate
 
       - name: Terraform Plan
-        run: terraform plan -out=tfplan
+        run: terraform plan -input=false -out=tfplan
 
       - name: Upload Terraform Plan Artifact
         uses: actions/upload-artifact@v4
@@ -82,19 +78,12 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
-      - name: Install Azure CLI
-        run: |
-          curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-
       - name: Azure Login
         run: |
           az login --service-principal \
             -u "${{ env.ARM_CLIENT_ID }}" \
             -p "${{ env.ARM_CLIENT_SECRET }}" \
             --tenant "${{ env.ARM_TENANT_ID }}"
-
-      - name: Set Subscription
-        run: |
           az account set --subscription "${{ env.ARM_SUBSCRIPTION_ID }}"
 
       - name: Download Terraform Plan Artifact
@@ -104,7 +93,7 @@ jobs:
           path: Env_prod
 
       - name: Terraform Init
-        run: terraform init
+        run: terraform init -input=false
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve
+        run: terraform apply -input=false -auto-approve tfplan

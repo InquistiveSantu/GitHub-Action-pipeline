@@ -2,13 +2,13 @@ RG = {
 
 
   rg1 = {
-    name     = "productiongrde"
+    name     = "prod-rg-01"
     location = "centralindia"
   }
 
 
   rg2 = {
-    name     = "production-grde2"
+    name     = "prod-rg-02"
     location = "centralindia"
   }
 }

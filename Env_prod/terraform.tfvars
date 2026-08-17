@@ -11,7 +11,14 @@ RG = {
     name     = "prod-rg-02"
     location = "centralindia"
   }
+
+  rg3 = {
+    name = "Santu-feature-rg"
+    location = "westus"
+  }
 }
+
+
 
 
 VNET = {
